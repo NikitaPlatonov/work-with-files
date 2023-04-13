@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
@@ -8,7 +9,7 @@ public class Main {
         int[] prices = {50, 60, 100};
         int[] cntProduct = new int[3];
         int sum = 0;
-        Basket basket = new Basket(products, prices);
+        Basket basket = null;
         while (true) {
             for (int i = 0; i < products.length; i++) {
                 System.out.println((i + 1) + " " + products[i] + " " + prices[i] + " руб/штука");
@@ -30,8 +31,7 @@ public class Main {
             sum += prices[numberProducts] * productCount;
             basket.addToCart(numberProducts, productCount);
         }
-        File file = new File("./out/basket.txt");
-        file.createNewFile();
+        File file = new File("basket.txt");
         basket.saveTxt(file);
         System.out.println("Ваша корзина: ");
         for (int i = 0; products.length > i; i++) {
