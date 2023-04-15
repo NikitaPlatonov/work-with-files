@@ -6,13 +6,13 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
     static String[] products = {"Хлеб", "Чипсы", "Рис"};
     static int[] prices = {50, 60, 100};
+    static File saveBin = new File("basket.bin");
 
-    static File saveFile = new File("basket.txt");
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         Basket basket = null;
-        if (saveFile.exists()) {
-            basket = Basket.loadFromTxtFile(saveFile);
+        if (saveBin.exists()) {
+            basket = Basket.loadFromBinFile(saveBin);
         } else {
             basket = new Basket(products, prices);
         }
@@ -36,7 +36,7 @@ public class Main {
             basket.addToCart(numberProducts, productCount);
         }
         basket.printCart();
-        System.out.println("Сумма товаров в корзине: "+basket.getSum());
-        basket.saveTxt(saveFile);
+        System.out.println("Сумма товаров в корзине: " + basket.getSum());
+        basket.saveBin(saveBin);
     }
 }

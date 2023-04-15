@@ -1,48 +1,36 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 
-public class Basket {
-     final private String[] products;
-     final private int[] prices;
+public class Basket implements Serializable {
+    private static final long serialVersionUID = 1;
+    final private String[] products;
+    final private int[] prices;
 
     private int[] countProduct;
 
     private int sum = 0;
 
-    public Basket(String [] products, int[] prices) {
+    public Basket(String[] products, int[] prices) {
         this.products = products;
         this.prices = prices;
         this.countProduct = new int[products.length];
     }
-    public static Basket loadFromTxtFile(File textFile) throws  IOException {
+
+    public static Basket loadFromBinFile(File file) throws IOException, ClassNotFoundException {
         Basket basket = null;
-        String[] productsFromFileTxt;
-        int[] pricesFromFileTxt;
-        int[] countProductsFromFileTxt;
-        int sumFromFileTxt;
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(textFile))) {
-            String productsFromFile = bufferedReader.readLine();
-            String pricesFromFile = bufferedReader.readLine();
-            String countProductsFromFile = bufferedReader.readLine();
-            String sum = bufferedReader.readLine();
-            productsFromFileTxt = productsFromFile.split(" ");
-            pricesFromFileTxt = Arrays.stream(pricesFromFile.split(" "))
-                    .map(Integer::parseInt)
-                    .mapToInt(Integer::intValue)
-                    .toArray();
-            countProductsFromFileTxt = Arrays.stream(countProductsFromFile.split(" "))
-                    .map(Integer::parseInt)
-                    .mapToInt(Integer::intValue)
-                    .toArray();
-            sumFromFileTxt = Integer.parseInt(sum);
-            basket = new Basket(productsFromFileTxt, pricesFromFileTxt);
-            basket.setSum(sumFromFileTxt);
-            basket.setCountProduct(countProductsFromFileTxt);
+        try (FileInputStream fis = new FileInputStream(file); ObjectInputStream obt = new ObjectInputStream(fis)) {
+            basket = (Basket) obt.readObject();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
         return basket;
+    }
+
+    public void saveBin(File file) throws IOException {
+        try (OutputStream out = new FileOutputStream(file); ObjectOutputStream obt = new ObjectOutputStream(out)) {
+            obt.writeObject(this);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void addToCart(int productNum, int amount) {
@@ -59,34 +47,15 @@ public class Basket {
         }
     }
 
-    public void saveTxt(File textTxt) throws IOException {
-        try (BufferedWriter outputStream = new BufferedWriter(new FileWriter(textTxt))) {
-            for (String product : products) {
-                outputStream.append(product).append(" ");
-            }
-            outputStream.newLine();
-            for (int price : prices) {
-                outputStream.append(String.valueOf(price)).append(" ");
-            }
-            outputStream.newLine();
-            for (int count : countProduct) {
-                outputStream.append(String.valueOf(count)).append(" ");
-            }
-            outputStream.newLine();
-            outputStream.append(String.valueOf(sum));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-    }
     public int getSum() {
         return sum;
     }
 
-    public void setCountProduct(int[] countProduct) {
-        this.countProduct = countProduct;
-    }
-
     public void setSum(int sum) {
         this.sum = sum;
+    }
+
+    public void setCountProduct(int[] countProduct) {
+        this.countProduct = countProduct;
     }
 }
