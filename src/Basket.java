@@ -1,47 +1,44 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Basket {
-    final private String[] products;
-    final private int[] prices;
+     final private String[] products;
+     final private int[] prices;
 
-    private int[] countProduct = new int[3];
+    private int[] countProduct;
 
     private int sum = 0;
 
-    public Basket(String[] products, int[] prices) {
+    public Basket(String [] products, int[] prices) {
         this.products = products;
         this.prices = prices;
+        this.countProduct = new int[products.length];
     }
-
-    public int getSum() {
-        return sum;
-    }
-
-    public int[] getCountProduct() {
-        return countProduct;
-    }
-
-    public void setSum(int sum) {
-        this.sum = sum;
-    }
-    public void setCountProduct(int[] countProduct) {
-        this.countProduct = countProduct;
-    }
-
     public static Basket loadFromTxtFile(File textFile) throws  IOException {
         Basket basket = null;
-        int [] count = new int[3];
+        String[] productsFromFileTxt;
+        int[] pricesFromFileTxt;
+        int[] countProductsFromFileTxt;
+        int sumFromFileTxt;
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(textFile))) {
-            String buf;
-            while ((buf = bufferedReader.readLine()) != null) {
-                String [] infoBasket = buf.split(" ");
-                if (infoBasket.length < 2) {
-                    basket.setSum(Integer.parseInt(buf));
-                } else {
-                    count[Integer.parseInt(infoBasket[0])] = Integer.parseInt(infoBasket[1]);
-                }
-            }
-           basket.setCountProduct(count);
+            String productsFromFile = bufferedReader.readLine();
+            String pricesFromFile = bufferedReader.readLine();
+            String countProductsFromFile = bufferedReader.readLine();
+            String sum = bufferedReader.readLine();
+            productsFromFileTxt = productsFromFile.split(" ");
+            pricesFromFileTxt = Arrays.stream(pricesFromFile.split(" "))
+                    .map(Integer::parseInt)
+                    .mapToInt(Integer::intValue)
+                    .toArray();
+            countProductsFromFileTxt = Arrays.stream(countProductsFromFile.split(" "))
+                    .map(Integer::parseInt)
+                    .mapToInt(Integer::intValue)
+                    .toArray();
+            sumFromFileTxt = Integer.parseInt(sum);
+            basket = new Basket(productsFromFileTxt, pricesFromFileTxt);
+            basket.setSum(sumFromFileTxt);
+            basket.setCountProduct(countProductsFromFileTxt);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -57,25 +54,39 @@ public class Basket {
         System.out.println("Ваша корзина: ");
         for (int i = 0; i < countProduct.length; i++) {
             if (countProduct[i] != 0) {
-                System.out.println(products[i] + " " + prices[i] + " руб/шт");
+                System.out.println(products[i] + " " + prices[i] + " руб/шт," + " У вас в корзине: " + countProduct[i] + " шт.");
             }
         }
     }
 
     public void saveTxt(File textTxt) throws IOException {
-        try (BufferedWriter outputStream = new BufferedWriter(new FileWriter(textTxt, false))) {
-            for (int i = 0; i < countProduct.length; i++) {
-                if (countProduct[i] == 0) {
-                    continue;
-                } else {
-                    outputStream.append(products[i]).append(String.valueOf(countProduct[i]));
-                    outputStream.newLine();
-                }
+        try (BufferedWriter outputStream = new BufferedWriter(new FileWriter(textTxt))) {
+            for (String product : products) {
+                outputStream.append(product).append(" ");
             }
-            outputStream.append("Сумма товаров в корзине: ");
-            outputStream.write(sum + " руб");
+            outputStream.newLine();
+            for (int price : prices) {
+                outputStream.append(String.valueOf(price)).append(" ");
+            }
+            outputStream.newLine();
+            for (int count : countProduct) {
+                outputStream.append(String.valueOf(count)).append(" ");
+            }
+            outputStream.newLine();
+            outputStream.append(String.valueOf(sum));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+    public int getSum() {
+        return sum;
+    }
+
+    public void setCountProduct(int[] countProduct) {
+        this.countProduct = countProduct;
+    }
+
+    public void setSum(int sum) {
+        this.sum = sum;
     }
 }

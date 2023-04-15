@@ -3,13 +3,19 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
+    static Scanner scanner = new Scanner(System.in);
+    static String[] products = {"Хлеб", "Чипсы", "Рис"};
+    static int[] prices = {50, 60, 100};
+
+    static File saveFile = new File("basket.txt");
+
     public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        String[] products = {"Хлеб ", "Молоко ", "Рис"};
-        int[] prices = {50, 60, 100};
-        int[] cntProduct = new int[3];
-        int sum = 0;
         Basket basket = null;
+        if (saveFile.exists()) {
+            basket = Basket.loadFromTxtFile(saveFile);
+        } else {
+            basket = new Basket(products, prices);
+        }
         while (true) {
             for (int i = 0; i < products.length; i++) {
                 System.out.println((i + 1) + " " + products[i] + " " + prices[i] + " руб/штука");
@@ -25,20 +31,12 @@ public class Main {
             int numberProducts = Integer.parseInt(parts[0]) - 1;
             int productCount = 1;
             if (parts.length > productCount) {
-                productCount += Integer.parseInt(parts[1]) - 1;
+                basket.addToCart(numberProducts, Integer.parseInt(parts[1]) - 1);
             }
-            cntProduct[numberProducts] += productCount;
-            sum += prices[numberProducts] * productCount;
             basket.addToCart(numberProducts, productCount);
         }
-        File file = new File("basket.txt");
-        basket.saveTxt(file);
-        System.out.println("Ваша корзина: ");
-        for (int i = 0; products.length > i; i++) {
-            if (cntProduct[i] > 0) {
-                System.out.println("Продукт: " + products[i] + ", " + cntProduct[i] + " шт, " + prices[i] + " руб/шт, " + "Цена: " + prices[i] * cntProduct[i] + " руб в сумме");
-            }
-        }
-        System.out.println("Cумма всех товаров: " + sum);
+        basket.printCart();
+        System.out.println("Сумма товаров в корзине: "+basket.getSum());
+        basket.saveTxt(saveFile);
     }
 }
