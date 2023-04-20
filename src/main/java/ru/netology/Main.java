@@ -13,19 +13,22 @@ public class Main {
 
     static File saveLogFile = new File("log.csv");
 
-    public static void main(String[] args) throws IOException {
+    static File saveForJson = new File("basket.json");
+
+    public static void main(String[] args) throws Exception {
         ClientLog clientLog = new ClientLog();
         Basket basket = null;
         //TODO проверка на наличие файла CSV
         if (!saveLogFile.exists()) {
             saveLogFile.createNewFile();
         }
-        //TODO проверка на наличие файла TXT
-        if (saveFile.exists()) {
-            basket = Basket.loadFromTxtFile(saveFile);
+        //TODO проверка на наличие файла Json
+        if (saveForJson.exists()) {
+            basket = Basket.loadFromJson(saveForJson);
         } else {
             basket = new Basket(products, prices);
         }
+        clientLog.logStart();
         while (true) {
             for (int i = 0; i < products.length; i++) {
                 System.out.println((i + 1) + " " + products[i] + " " + prices[i] + " руб/штука");
@@ -50,7 +53,8 @@ public class Main {
         }
         basket.printCart();
         System.out.println("Сумма товаров в корзине: " + basket.getSum());
-        basket.saveTxt(saveFile);
+        clientLog.logEnd();
+        basket.saveToJson(saveForJson);
         clientLog.exportAxCSV(saveLogFile);
     }
 }

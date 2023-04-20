@@ -3,7 +3,7 @@ package ru.netology;
 import java.io.*;
 import java.util.Arrays;
 
-public class Basket {
+public class Basket implements Serializable {
     final private String[] products;
     final private int[] prices;
 
@@ -29,20 +29,24 @@ public class Basket {
             String countProductsFromFile = bufferedReader.readLine();
             String sum = bufferedReader.readLine();
             productsFromFileTxt = productsFromFile.split(" ");
-            pricesFromFileTxt = Arrays.stream(pricesFromFile.split(" "))
-                    .map(Integer::parseInt)
-                    .mapToInt(Integer::intValue)
-                    .toArray();
-            countProductsFromFileTxt = Arrays.stream(countProductsFromFile.split(" "))
-                    .map(Integer::parseInt)
-                    .mapToInt(Integer::intValue)
-                    .toArray();
+            pricesFromFileTxt = Arrays.stream(pricesFromFile.split(" ")).map(Integer::parseInt).mapToInt(Integer::intValue).toArray();
+            countProductsFromFileTxt = Arrays.stream(countProductsFromFile.split(" ")).map(Integer::parseInt).mapToInt(Integer::intValue).toArray();
             sumFromFileTxt = Integer.parseInt(sum);
             basket = new Basket(productsFromFileTxt, pricesFromFileTxt);
             basket.setSum(sumFromFileTxt);
             basket.setCountProduct(countProductsFromFileTxt);
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        }
+        return basket;
+    }
+
+    public static Basket loadFromJson(File fileJson) throws Exception {
+        Basket basket = null;
+        try (ObjectInputStream obt = new ObjectInputStream(new FileInputStream(fileJson))) {
+            basket = (Basket) obt.readObject();
+        } catch (Exception e) {
+            throw new Exception("Не удалось десериализовать объект");
         }
         return basket;
     }
@@ -78,6 +82,14 @@ public class Basket {
             outputStream.append(String.valueOf(sum));
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void saveToJson(File fileJson) throws Exception {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileJson))) {
+            out.writeObject(this);
+        } catch (Exception e) {
+            throw new Exception("Файл не найден");
         }
     }
 
