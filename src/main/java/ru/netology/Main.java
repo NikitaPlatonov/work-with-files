@@ -1,5 +1,12 @@
 package ru.netology;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -15,19 +22,11 @@ public class Main {
 
     static File saveForJson = new File("basket.json");
 
+    static File settingXML = new File("shop.xml");
+
     public static void main(String[] args) throws Exception {
-        ClientLog clientLog = new ClientLog();
         Basket basket = null;
-        //TODO проверка на наличие файла CSV
-        if (!saveLogFile.exists()) {
-            saveLogFile.createNewFile();
-        }
-        //TODO проверка на наличие файла Json
-        if (saveForJson.exists()) {
-            basket = Basket.loadFromJson(saveForJson);
-        } else {
-            basket = new Basket(products, prices);
-        }
+        ClientLog clientLog = new ClientLog();
         clientLog.logStart();
         while (true) {
             for (int i = 0; i < products.length; i++) {

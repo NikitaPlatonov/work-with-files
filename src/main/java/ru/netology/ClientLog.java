@@ -25,7 +25,7 @@ public class ClientLog {
     public boolean exportAxCSV(File textFile) throws Exception {
         if (infActions != null) {
             String[] result = infActions.toString().split(" ");
-            try (CSVWriter writer = new CSVWriter(new FileWriter(textFile))) {
+            try (CSVWriter writer = new CSVWriter(new FileWriter(textFile, true))) {
                 //TODO такая реализация нужна, чтобы каждое отдельное действие было на новой строке
                 for (String actions : result) {
                     String[] record = {actions};
