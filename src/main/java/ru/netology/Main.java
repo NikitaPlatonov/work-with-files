@@ -47,12 +47,18 @@ public class Main {
         basket.printCart();
         System.out.println("Сумма товаров в корзине: " + basket.getSum());
         clientLog.logEnd();
+        //TODO проверка нужно ли сохранять корзину.
         if (xmlReader.saveEnabled.equals("true") || xmlReader.saveEnabled.equals("True")) {
             switch (xmlReader.saveStringFormat) {
-                case ("json") : basket.saveToJson(new File(xmlReader.saveFile));break;
-                case ("txt") : basket.saveTxt(new File(xmlReader.saveFile));break;
+                case ("json"):
+                    basket.saveToJson(new File(xmlReader.saveFile));
+                    break;
+                case ("txt"):
+                    basket.saveTxt(new File(xmlReader.saveFile));
+                    break;
             }
         }
+        //TODO проверка нужно ли сохранять логи
         if (xmlReader.logEnabled.equals("true") || xmlReader.logEnabled.equals("True")) {
             clientLog.exportAxCSV(new File(xmlReader.logStringFileName));
         }
@@ -63,8 +69,12 @@ public class Main {
         Basket basket = null;
         if (enabled.equals("true") || enabled.equals("True")) {
             switch (format) {
-                case ("json") : basket = Basket.loadFromJson(new File(fileName));break;
-                case ("txt") : basket = Basket.loadFromTxtFile(new File(fileName));break;
+                case ("json"):
+                    basket = Basket.loadFromJson(new File(fileName));
+                    break;
+                case ("txt"):
+                    basket = Basket.loadFromTxtFile(new File(fileName));
+                    break;
             }
         } else {
             basket = new Basket(products, prices);
