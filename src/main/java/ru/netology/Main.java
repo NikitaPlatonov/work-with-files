@@ -8,14 +8,6 @@ public class Main {
     static String[] products = {"Хлеб", "Чипсы", "Рис"};
     static int[] prices = {50, 60, 100};
 
-    static File saveFile = new File("basket.txt");
-
-    static File saveLogFile = new File("log.csv");
-
-    static File saveForJson = new File("basket.json");
-
-    static File settingXML = new File("shop.xml");
-
     public static void main(String[] args) throws Exception {
         ClientLog clientLog = new ClientLog();
         XMLReader xmlReader = new XMLReader();
