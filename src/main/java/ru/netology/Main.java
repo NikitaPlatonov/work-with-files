@@ -1,14 +1,6 @@
 package ru.netology;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -25,8 +17,10 @@ public class Main {
     static File settingXML = new File("shop.xml");
 
     public static void main(String[] args) throws Exception {
-        Basket basket = null;
         ClientLog clientLog = new ClientLog();
+        XMLReader xmlReader = new XMLReader();
+        xmlReader.reader(new File("shop.xml"));
+        Basket basket = loadFromXmlFile(xmlReader.loadEnabled, xmlReader.loadStringFileName, xmlReader.loadStringFormat);
         clientLog.logStart();
         while (true) {
             for (int i = 0; i < products.length; i++) {
@@ -53,7 +47,28 @@ public class Main {
         basket.printCart();
         System.out.println("Сумма товаров в корзине: " + basket.getSum());
         clientLog.logEnd();
-        basket.saveToJson(saveForJson);
+        if (xmlReader.saveEnabled.equals("true") || xmlReader.saveEnabled.equals("True")) {
+            switch (xmlReader.saveStringFormat) {
+                case ("json") : basket.saveToJson(new File(xmlReader.saveFile));break;
+                case ("txt") : basket.saveTxt(new File(xmlReader.saveFile));break;
+            }
+        }
+        if (xmlReader.logEnabled.equals("true") || xmlReader.logEnabled.equals("True")) {
+            clientLog.exportAxCSV(new File(xmlReader.logStringFileName));
+        }
         clientLog.exportAxCSV(saveLogFile);
+    }
+
+    public static Basket loadFromXmlFile(String enabled, String fileName, String format) throws Exception {
+        Basket basket = null;
+        if (enabled.equals("true") || enabled.equals("True")) {
+            switch (format) {
+                case ("json") : basket = Basket.loadFromJson(new File(fileName));break;
+                case ("txt") : basket = Basket.loadFromTxtFile(new File(fileName));break;
+            }
+        } else {
+            basket = new Basket(products, prices);
+        }
+        return basket;
     }
 }
