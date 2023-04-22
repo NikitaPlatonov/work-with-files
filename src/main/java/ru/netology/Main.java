@@ -62,7 +62,6 @@ public class Main {
         if (xmlReader.logEnabled.equals("true") || xmlReader.logEnabled.equals("True")) {
             clientLog.exportAxCSV(new File(xmlReader.logStringFileName));
         }
-        clientLog.exportAxCSV(saveLogFile);
     }
 
     public static Basket loadFromXmlFile(String enabled, String fileName, String format) throws Exception {
